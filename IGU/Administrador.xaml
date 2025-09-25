@@ -1,0 +1,49 @@
+﻿<Window x:Class="BuildM.IGU.Administrador"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Administrador" Height="600" Width="1000"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <!-- Fondo principal -->
+        <Grid.Background>
+            <ImageBrush ImageSource="pack://application:,,,/BuildM;component/Recursos/FondoAdmin.png"
+                        Stretch="Fill"/>
+        </Grid.Background>
+
+        <!-- Contenido encima del fondo -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <!-- menú lateral -->
+                <ColumnDefinition Width="*"/>
+                <!-- área de contenido -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Menú lateral -->
+            <StackPanel Grid.Column="0" Background="#FF1E3A5F" Margin="110,185,700,141" Grid.ColumnSpan="2" RenderTransformOrigin="0.486,0.672">
+                <Button Content="Inventario" Name="btnInventario"
+                        Click="BtnInventario_Click"
+                        Margin="0,10,0,10" Height="40"
+                        Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
+                <Button Content="Solicitudes" Name="btnSolicitudes"
+                        Click="BtnSolicitudes_Click"
+                        Margin="0,10,0,10" Height="40"
+                        Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
+                <Button Content="Proyectos" Name="btnProyectos"
+                        Click="BtnProyectos_Click"
+                        Margin="0,10,0,10" Height="40"
+                        Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
+                <Button Content="Reportes" Name="btnReportes"
+                        Click="BtnReportes_Click"
+                        Margin="0,10,0,10" Height="40"
+                        Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
+            </StackPanel>
+
+            <!-- Área de contenido dinámico -->
+            <Frame x:Name="frameContenido"
+					   Grid.Column="1"
+					   NavigationUIVisibility="Hidden" Margin="120,140,89,65"/>
+        </Grid>
+    </Grid>
+</Window>

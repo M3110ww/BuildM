@@ -1,0 +1,51 @@
+﻿<Window x:Class="BuildM.IGU.Registro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Registro" Height="400" Width="416"
+        WindowStartupLocation="CenterScreen">
+
+	<Canvas>
+		<!-- Fondo -->
+		<Canvas.Background>
+			<ImageBrush ImageSource="pack://application:,,,/BuildM;component/Recursos/FondoR.png" Stretch="Fill"/>
+		</Canvas.Background>
+
+		<!-- Nombre -->
+		<TextBlock Text="Nombre:" Foreground="Black"
+                   Canvas.Left="62" Canvas.Top="119"/>
+		<TextBox x:Name="txtNombre" Width="191" Height="25"
+                 Canvas.Left="132" Canvas.Top="114"/>
+
+		<!-- Correo -->
+		<TextBlock Text="Correo:" Foreground="Black"
+                   Canvas.Left="62" Canvas.Top="159"/>
+		<TextBox x:Name="txtCorreo" Width="191" Height="25"
+                 Canvas.Left="132" Canvas.Top="154"/>
+
+		<!-- Contraseña -->
+		<TextBlock Text="Contraseña:" Foreground="Black"
+                   Canvas.Left="62" Canvas.Top="192"/>
+		<PasswordBox x:Name="txtPassword" Width="191" Height="25"
+                     Canvas.Left="132" Canvas.Top="187"/>
+
+		<!-- Rol -->
+		<TextBlock Text="Rol:" Foreground="Black"
+                   Canvas.Left="62" Canvas.Top="218"/>
+		<ComboBox x:Name="cmbRol" Width="256" Height="25"
+                  Canvas.Left="80" Canvas.Top="239">
+			<ComboBoxItem Content="CLIENTE" IsSelected="True"/>
+			<ComboBoxItem Content="ADMINISTRADOR"/>
+		</ComboBox>
+
+		<!-- Botones -->
+		<Button Content="Registrar"
+                Click="btnRegistrar_Click"
+                Width="127" Height="25"
+                Canvas.Left="62" Canvas.Top="288"/>
+
+		<Button Content="Cancelar"
+                Click="btnCancelar_Click"
+                Width="127" Height="25"
+                Canvas.Left="208" Canvas.Top="288"/>
+	</Canvas>
+</Window>
