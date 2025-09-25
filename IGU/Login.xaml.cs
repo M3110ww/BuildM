@@ -39,7 +39,7 @@ namespace BuildM.IGU
                 cmd.Parameters.AddWithValue("@p", contraseña);
 
                 var rol = cmd.ExecuteScalar() as string;
-
+                //hola
                 if (rol == null)
                 {
                     MessageBox.Show("Correo o contraseña incorrectos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
