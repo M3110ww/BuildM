@@ -1,9 +1,9 @@
-﻿using System;
+﻿using System.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace BuildM.IGU
 {
@@ -16,17 +16,18 @@ namespace BuildM.IGU
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: lógica para agregar materiales
-        }
+            string material = txtMaterial.Text.Trim();
+            string cantidad = txtCantidad.Text.Trim();
 
-        private void BtnEnviar_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO: lógica para enviar la solicitud
-        }
+            if (string.IsNullOrWhiteSpace(material) || string.IsNullOrWhiteSpace(cantidad))
+            {
+                MessageBox.Show("Debe ingresar material y cantidad.", "Aviso",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-        private void BtnCancelar_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close(); // cerrar ventana de solicitud
+            MessageBox.Show($"Material: {material}\nCantidad: {cantidad}", "Datos ingresados",
+                MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

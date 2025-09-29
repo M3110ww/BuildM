@@ -31,4 +31,4 @@
                 Canvas.Left="171" Canvas.Top="244"
                 Click="BtnRegistro_Click"/>
     </Canvas>
-</Window>
+</Window>

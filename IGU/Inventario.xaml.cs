@@ -16,6 +16,16 @@ namespace BuildM.IGU
         {
             InitializeComponent();
             LoadMaterials();
+
+            Loaded += (s, e) =>
+            {
+                var win = Window.GetWindow(this);
+                if (win != null)
+                {
+                    win.WindowState = WindowState.Maximized;
+                    win.ResizeMode = ResizeMode.NoResize;
+                }
+            };
         }
 
         private void LoadMaterials()
@@ -36,7 +46,7 @@ namespace BuildM.IGU
                             {
                                 IdMaterial = rdr.GetInt32("id_material"),
                                 Nombre = rdr.GetString("nombre"),
-                                Descripcion = rdr.GetString ("descripcion"),
+                                Descripcion = rdr.GetString("descripcion"),
                                 Stock = rdr.GetInt32("stock"),
                                 Costo = rdr.GetDecimal("costo")
                             });
