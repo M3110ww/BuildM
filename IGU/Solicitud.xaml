@@ -1,9 +1,9 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="av" x:Class="BuildM.IGU.Solicitud"
+        x:Class="BuildM.IGU.Solicitud"
         WindowStartupLocation="CenterScreen"
-        Title="SolicitudMateriales" Height="450" Width="800">
+        Title="Solicitud de Materiales" Height="500" Width="800">
 
     <Canvas>
         <Canvas.Background>
@@ -12,38 +12,55 @@
         </Canvas.Background>
 
         <!-- Título -->
-        <Button Content="Solicitud de Materiales" BorderBrush="Transparent" 
-                FontSize="15" Foreground="White" FontWeight="Bold" 
-                Background="#1e3a5f" Width="183" Height="43"
-                Canvas.Left="81" Canvas.Top="145"/>
 
         <!-- Material -->
         <Label Content="Material :" FontSize="17" FontWeight="Bold"
                Canvas.Left="308" Canvas.Top="112"/>
-        <TextBox x:Name="txtMaterial" Width="361" Height="22"
-                 TextWrapping="Wrap"
-                 Canvas.Left="308" Canvas.Top="142"/>
+        <ComboBox x:Name="cmbMateriales" Width="361" Height="25"
+                  Canvas.Left="308" Canvas.Top="142"/>
 
         <!-- Cantidad -->
         <Label Content="Cantidad :" FontSize="17" FontWeight="Bold"
-               Canvas.Left="308" Canvas.Top="163"/>
-        <TextBox x:Name="txtCantidad" Width="166" Height="22"
-                 TextWrapping="Wrap"
-                 Canvas.Left="308" Canvas.Top="198"/>
+               Canvas.Left="308" Canvas.Top="175"/>
+        <TextBox x:Name="txtCantidad" Width="166" Height="25"
+                 Canvas.Left="308" Canvas.Top="200"/>
 
         <!-- Botones -->
         <Button Content="Aceptar" Background="#fde89e" BorderBrush="Transparent"
                 Width="116" Height="28"
-                Canvas.Left="308" Canvas.Top="235"
+                Canvas.Left="308" Canvas.Top="240"
                 Click="BtnAgregar_Click"/>
 
         <Button Content="Enviar" Background="#fcd75b" BorderBrush="Transparent"
                 Width="116" Height="28"
-                Canvas.Left="431" Canvas.Top="235"/>
+                Canvas.Left="431" Canvas.Top="240"
+                Click="BtnEnviar_Click"/>
 
         <Button Content="Cancelar" Background="#fbc215" BorderBrush="Transparent"
                 Width="116" Height="28"
-                Canvas.Left="553" Canvas.Top="235"/>
-        <DataGrid Height="111" Canvas.Left="308" Canvas.Top="268" Width="361" av:ItemsSource="{av:SampleData ItemCount=5}"/>
+                Canvas.Left="553" Canvas.Top="240"
+                Click="BtnCancelar_Click"/>
+
+        <!-- Tabla de materiales -->
+        <DataGrid x:Name="dgSolicitud" 
+          AutoGenerateColumns="False" 
+          CanUserAddRows="False"
+          Height="160" Width="426"
+          Canvas.Left="280" Canvas.Top="280"
+          HorizontalAlignment="Left" 
+          VerticalAlignment="Center">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Material" Binding="{Binding Nombre}" Width="*"/>
+                <DataGridTextColumn Header="Cantidad" Binding="{Binding Cantidad}" Width="80"/>
+                <DataGridTextColumn Header="Precio Unitario" Binding="{Binding Precio}" Width="120"/>
+                <DataGridTextColumn Header="Subtotal" Binding="{Binding Subtotal}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Total -->
+        <Label x:Name="lblTotal" Content="Total: $0"
+               FontSize="16" FontWeight="Bold"
+               Canvas.Left="308" Canvas.Top="443" HorizontalAlignment="Center" VerticalAlignment="Top"/>
     </Canvas>
 </Window>
