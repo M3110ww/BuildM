@@ -29,10 +29,6 @@
                     Click="BtnSolicitudes_Click"
                     Margin="0,10,0,10" Height="40"
                     Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-            <Button Content="Proyectos" Name="btnProyectos"
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
             <Button Content="Reportes" Name="btnReportes"
                     Click="BtnReportes_Click"
                     Margin="0,10,0,10" Height="40"
