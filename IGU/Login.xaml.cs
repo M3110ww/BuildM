@@ -1,4 +1,5 @@
-﻿using MySqlConnector;
+﻿using BuildM.Models;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,47 +25,57 @@ namespace BuildM.IGU
 
             if (string.IsNullOrWhiteSpace(correo) || string.IsNullOrWhiteSpace(contraseña))
             {
-                MessageBox.Show("Ingrese correo y contraseña.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Ingrese correo y contraseña.", "Aviso");
                 return;
             }
-            
+
             try
             {
-                using var conn = new MySqlConnection(connStr);
-                conn.Open();
-
-                string sql = "SELECT rol FROM usuarios WHERE correo=@c AND contraseña=@p";
-                using var cmd = new MySqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@c", correo);
-                cmd.Parameters.AddWithValue("@p", contraseña);
-
-                var rol = cmd.ExecuteScalar() as string;
-                //hola
-                if (rol == null)
+                using (var conn = new MySqlConnection(connStr))
                 {
-                    MessageBox.Show("Correo o contraseña incorrectos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                else
-                {
-                    MessageBox.Show($"Bienvenido, {rol}!", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    conn.Open();
 
-                    if (rol == "ADMINISTRADOR")
+                    string sql = "SELECT id_usuario, nombre, rol FROM usuarios WHERE correo=@c AND contraseña=@p";
+                    using (var cmd = new MySqlCommand(sql, conn))
                     {
-                        var ventanaAdmin = new Administrador(); // ahora abre la nueva interfaz con menú
-                        ventanaAdmin.Show();
-                    }
-                    else if (rol == "CLIENTE")
-                    {
-                        var ventanaCliente = new Solicitud(); // tu ventana de solicitud de materiales
-                        ventanaCliente.Show();
-                    }
+                        cmd.Parameters.AddWithValue("@c", correo);
+                        cmd.Parameters.AddWithValue("@p", contraseña);
 
-                    this.Close(); // cerrar login
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                // Guardar datos en SesionUsuario
+                                SesionUsuario.IdUsuario = reader.GetInt32("id_usuario");
+                                SesionUsuario.Nombre = reader.GetString("nombre");
+                                SesionUsuario.Rol = reader.GetString("rol");
+
+                                MessageBox.Show($"Bienvenido,  ({SesionUsuario.Rol})");
+
+                                if (SesionUsuario.Rol == "ADMINISTRADOR")
+                                {
+                                    var ventanaAdmin = new Administrador();
+                                    ventanaAdmin.Show();
+                                }
+                                else if (SesionUsuario.Rol == "CLIENTE")
+                                {
+                                    var ventanaCliente = new Solicitud();
+                                    ventanaCliente.Show();
+                                }
+
+                                this.Close();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Correo o contraseña incorrectos.", "Error");
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al iniciar sesión: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Error al iniciar sesión: " + ex.Message, "Error");
             }
         }
 

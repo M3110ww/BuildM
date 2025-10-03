@@ -1,0 +1,97 @@
+﻿<Page x:Class="BuildM.IGU.Solicitudes"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Solicitudes de Proyectos" Height="520" Width="900" MinWidth="700"
+      Background="White">
+
+    <Grid Margin="10" Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Título -->
+        <TextBlock Text="Solicitudes de Proyectos"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"
+                   Grid.Row="0"
+                   Foreground="#2C3E50"/>
+
+        <!-- Lista dinámica -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="SolicitudesList" Margin="0,10">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="6"
+                                BorderBrush="#DDD"
+                                BorderThickness="1"
+                                Padding="10"
+                                Margin="0,0,0,12"
+                                Background="White">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Nombre del Proyecto -->
+                                <TextBlock Text="{Binding NombreProyecto}" 
+                                           FontWeight="Bold" 
+                                           FontSize="14"
+                                           VerticalAlignment="Center"/>
+
+                                <!-- Responsable -->
+                                <TextBlock Grid.Column="1" 
+                                           Text="{Binding Responsable}"
+                                           VerticalAlignment="Center"/>
+
+                                <!-- Fecha -->
+                                <TextBlock Grid.Column="2" 
+                                           Text="{Binding Fecha, StringFormat=d}"
+                                           VerticalAlignment="Center"/>
+
+                                <!-- Estado + Detalles -->
+                                <StackPanel Grid.Column="3" Orientation="Vertical" HorizontalAlignment="Right">
+                                    <Button Content="{Binding Estado}"
+                                            Width="120" Height="30"
+                                            Margin="0,0,0,5"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Click="CambiarEstado_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Background" Value="Gray"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Estado}" Value="En espera">
+                                                        <Setter Property="Background" Value="RoyalBlue"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Estado}" Value="Aprobado">
+                                                        <Setter Property="Background" Value="Green"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Estado}" Value="Rechazado">
+                                                        <Setter Property="Background" Value="DarkRed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Content="Ver Detalles"
+                                            Width="120" Height="28"
+                                            Background="Black"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Click="VerDetalles_Click"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Page>
