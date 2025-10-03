@@ -1,37 +1,47 @@
-﻿using MySqlConnector;
+﻿using BuildM.Models;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Transactions;
 using System.Windows;
 
 namespace BuildM.IGU
 {
     public partial class Solicitud : Window
     {
+        // Modelo de material (ajusta si ya tienes clase en Models)
         public class Material
         {
-            public int Id { get; set; }
-            public string Nombre { get; set; }
-            public string Descripcion { get; set; }
+            public int IdMaterial { get; set; }
+            public string Nombre { get; set; } = string.Empty;
+            public string Descripcion { get; set; } = string.Empty;
             public int Stock { get; set; }
-            public double Precio { get; set; }
+            public decimal Costo { get; set; }
+
+            // Propiedad para mostrar en ComboBox (opcional)
+            public string DisplayText => $"{Nombre} - {Descripcion} - ${Costo:N2}";
+
+            public override string ToString() => DisplayText;
         }
 
+        // Item que se añade a la solicitud
         public class ItemSolicitud
         {
             public int IdMaterial { get; set; }
-            public string Nombre { get; set; }
-            public string Descripcion { get; set; }
+            public string Nombre { get; set; } = string.Empty;
+            public string Descripcion { get; set; } = string.Empty;
             public int Cantidad { get; set; }
-            public double Precio { get; set; }
-            public double Subtotal => Cantidad * Precio;
+            public decimal Precio { get; set; }
+            public decimal Subtotal => Cantidad * Precio;
         }
 
         private List<Material> materialesDisponibles = new List<Material>();
         private List<ItemSolicitud> solicitudActual = new List<ItemSolicitud>();
 
-        string connStr = "server=localhost;database=buildmanager;uid=root;pwd=1013105926;";
+        // Ajusta la cadena de conexión a la tuya
+        private string connStr = "Server=localhost;Port=3306;Database=BuildManager;Uid=root;Pwd=1013105926;SslMode=None;AllowPublicKeyRetrieval=True;";
 
         public Solicitud()
         {
@@ -47,137 +57,187 @@ namespace BuildM.IGU
             {
                 conn.Open();
                 string query = "SELECT id_material, nombre, descripcion, stock, costo FROM materiales";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                MySqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
+                using (var cmd = new MySqlCommand(query, conn))
+                using (var reader = cmd.ExecuteReader())
                 {
-                    materialesDisponibles.Add(new Material
+                    while (reader.Read())
                     {
-                        Id = reader.GetInt32("id_material"),
-                        Nombre = reader.GetString("nombre"),
-                        Stock = reader.GetInt32("stock"),
-                        Descripcion = reader.GetString("descripcion"),
-                        Precio = reader.GetDouble("costo")
-                    });
+                        var mat = new Material
+                        {
+                            IdMaterial = reader.GetInt32("id_material"),
+                            Nombre = reader.GetString("nombre"),
+                            Descripcion = reader.IsDBNull(reader.GetOrdinal("descripcion")) ? string.Empty : reader.GetString("descripcion"),
+                            Stock = reader.GetInt32("stock"),
+                            Costo = reader.GetDecimal("costo")
+                        };
+                        materialesDisponibles.Add(mat);
+                    }
                 }
             }
 
-            // 🔹 Mostrar nombre + descripción + stock + precio
-            cmbMateriales.ItemsSource = materialesDisponibles
-            .Select(m => $"{m.Nombre} - {m.Descripcion} - Precio: ${m.Precio}")
-            .ToList();
+            cmbMateriales.ItemsSource = materialesDisponibles;
+            cmbMateriales.SelectedIndex = -1;
         }
 
         private void BtnAgregar_Click(object sender, RoutedEventArgs e)
         {
-            if (cmbMateriales.SelectedIndex == -1 || string.IsNullOrWhiteSpace(txtCantidad.Text))
+            if (cmbMateriales.SelectedItem == null)
             {
-                MessageBox.Show("Seleccione un material y cantidad.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Seleccione un material.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var seleccionado = materialesDisponibles[cmbMateriales.SelectedIndex];
-
-            if (!int.TryParse(txtCantidad.Text, out int cantidad) || cantidad <= 0)
+            if (!int.TryParse(txtCantidad.Text.Trim(), out int cantidad) || cantidad <= 0)
             {
-                MessageBox.Show("Ingrese una cantidad válida.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Ingrese una cantidad válida.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (cantidad > seleccionado.Stock)
+            var mat = (Material)cmbMateriales.SelectedItem;
+
+            if (cantidad > mat.Stock)
             {
-                MessageBox.Show("No hay suficiente stock disponible.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("No hay suficiente stock.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            var item = new ItemSolicitud
+            // Si ya existe el material en la lista, simplemente aumentamos la cantidad (opcional) o agregar nuevo item.
+            var existing = solicitudActual.FirstOrDefault(x => x.IdMaterial == mat.IdMaterial);
+            if (existing != null)
             {
-                IdMaterial = seleccionado.Id,
-                Nombre = seleccionado.Nombre,
-                Cantidad = cantidad,
-                Precio = seleccionado.Precio
-            };
+                existing.Cantidad += cantidad;
+            }
+            else
+            {
+                solicitudActual.Add(new ItemSolicitud
+                {
+                    IdMaterial = mat.IdMaterial,
+                    Nombre = mat.Nombre,
+                    Descripcion = mat.Descripcion,
+                    Cantidad = cantidad,
+                    Precio = mat.Costo
+                });
+            }
 
-            solicitudActual.Add(item);
             dgSolicitud.ItemsSource = null;
             dgSolicitud.ItemsSource = solicitudActual;
+            ActualizarTotal();
+        }
 
+        private void BtnQuitar_Click(object sender, RoutedEventArgs e)
+        {
+            var sel = dgSolicitud.SelectedItem as ItemSolicitud;
+            if (sel == null)
+            {
+                MessageBox.Show("Seleccione una fila para quitar.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            solicitudActual.Remove(sel);
+            dgSolicitud.ItemsSource = null;
+            dgSolicitud.ItemsSource = solicitudActual;
             ActualizarTotal();
         }
 
         private void ActualizarTotal()
         {
-            double total = solicitudActual.Sum(x => x.Subtotal);
-            lblTotal.Content = $"Total: ${total}";
+            decimal total = solicitudActual.Sum(x => x.Subtotal);
+            lblTotal.Content = $"Total: ${total:N2}";
         }
 
         private void BtnEnviar_Click(object sender, RoutedEventArgs e)
         {
+            string nombreProyecto = txtNombreProyecto.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(nombreProyecto))
+            {
+                MessageBox.Show("Ingrese el nombre del proyecto.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (!solicitudActual.Any())
             {
                 MessageBox.Show("No hay materiales en la solicitud.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            var result = MessageBox.Show("¿Está seguro de enviar la solicitud?", "Confirmación",
-                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (MessageBox.Show("¿Está seguro de enviar la solicitud?", "Confirmación", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
 
-            if (result == MessageBoxResult.Yes)
+            using (var conn = new MySqlConnection(connStr))
             {
-                using (var conn = new MySqlConnection(connStr))
+                conn.Open();
+                using (var tx = conn.BeginTransaction())
                 {
-                    conn.Open();
-                    MySqlTransaction transaction = conn.BeginTransaction();
-
                     try
                     {
-                        // 🔹 Insertar solicitud principal
-                        string querySolicitud = "INSERT INTO solicitudes (fecha, total) VALUES (NOW(), @total)";
-                        MySqlCommand cmdSolicitud = new MySqlCommand(querySolicitud, conn, transaction);
-                        cmdSolicitud.Parameters.AddWithValue("@total", solicitudActual.Sum(x => x.Subtotal));
-                        cmdSolicitud.ExecuteNonQuery();
-
-                        long idSolicitud = cmdSolicitud.LastInsertedId;
-
-                        // 🔹 Insertar detalles de solicitud
-                        foreach (var item in solicitudActual)
+                        // Insertar cabecera en solicitudes
+                        string sqlSolicitud = @"INSERT INTO solicitudes (fecha, nombre_proyecto, responsable, estado, id_usuario)
+                                        VALUES (NOW(), @nombre_proyecto, @responsable, 'EN ESPERA', @id_usuario)";
+                        using (var cmdSol = new MySqlCommand(sqlSolicitud, conn, tx))
                         {
-                            string queryDetalle = @"INSERT INTO detalle_solicitud 
-                                                    (idSolicitud, id_material, cantidad, precio, subtotal)
-                                                    VALUES (@idSolicitud, @id_material, @cantidad, @precio, @subtotal)";
-                            MySqlCommand cmdDetalle = new MySqlCommand(queryDetalle, conn, transaction);
-                            cmdDetalle.Parameters.AddWithValue("@idSolicitud", idSolicitud);
-                            cmdDetalle.Parameters.AddWithValue("@id_material", item.IdMaterial);
-                            cmdDetalle.Parameters.AddWithValue("@cantidad", item.Cantidad);
-                            cmdDetalle.Parameters.AddWithValue("@precio", item.Precio);
-                            cmdDetalle.Parameters.AddWithValue("@subtotal", item.Subtotal);
-                            cmdDetalle.ExecuteNonQuery();
-
-                            // 🔹 Actualizar stock
-                            string updateStock = "UPDATE materiales SET stock = stock - @cantidad WHERE id_material = @id_material";
-                            MySqlCommand cmdStock = new MySqlCommand(updateStock, conn, transaction);
-                            cmdStock.Parameters.AddWithValue("@cantidad", item.Cantidad);
-                            cmdStock.Parameters.AddWithValue("@id_material", item.IdMaterial);
-                            cmdStock.ExecuteNonQuery();
+                            cmdSol.Parameters.AddWithValue("@nombre_proyecto", nombreProyecto);
+                            cmdSol.Parameters.AddWithValue("@responsable", SesionUsuario.Nombre); // 🔹 Ahora guarda el NOMBRE y no el rol
+                            cmdSol.Parameters.AddWithValue("@id_usuario", SesionUsuario.IdUsuario);
+                            cmdSol.ExecuteNonQuery();
                         }
 
-                        transaction.Commit();
-                        MessageBox.Show("Solicitud enviada con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                        long idSolicitud = 0;
+                        using (var cmdGet = new MySqlCommand("SELECT LAST_INSERT_ID()", conn, tx))
+                        {
+                            idSolicitud = Convert.ToInt64(cmdGet.ExecuteScalar());
+                        }
 
+                        // Insertar cada línea en detalle_solicitud
+                        foreach (var item in solicitudActual)
+                        {
+                            string sqlDetalle = @"INSERT INTO detalle_solicitud
+                                           (id_solicitud, id_material, nombre_proyecto, responsable, nombre_material, descripcion_material, cantidad, precio_unitario, subtotal)
+                                           VALUES
+                                           (@idSolicitud, @idMaterial, @nombreProyecto, @responsable, @nombreMaterial, @descripcionMaterial, @cantidad, @precioUnitario, @subtotal)";
+                            using (var cmdDet = new MySqlCommand(sqlDetalle, conn, tx))
+                            {
+                                cmdDet.Parameters.AddWithValue("@idSolicitud", idSolicitud);
+                                cmdDet.Parameters.AddWithValue("@idMaterial", item.IdMaterial);
+                                cmdDet.Parameters.AddWithValue("@nombreProyecto", nombreProyecto);
+                                cmdDet.Parameters.AddWithValue("@responsable", SesionUsuario.Nombre); // 🔹 También aquí guarda el nombre
+                                cmdDet.Parameters.AddWithValue("@nombreMaterial", item.Nombre);
+                                cmdDet.Parameters.AddWithValue("@descripcionMaterial", item.Descripcion);
+                                cmdDet.Parameters.AddWithValue("@cantidad", item.Cantidad);
+                                cmdDet.Parameters.AddWithValue("@precioUnitario", item.Precio);
+                                cmdDet.Parameters.AddWithValue("@subtotal", item.Subtotal);
+                                cmdDet.ExecuteNonQuery();
+                            }
+
+                            // Actualizar stock
+                            string sqlStock = "UPDATE materiales SET stock = stock - @cantidad WHERE id_material = @idMaterial";
+                            using (var cmdStock = new MySqlCommand(sqlStock, conn, tx))
+                            {
+                                cmdStock.Parameters.AddWithValue("@cantidad", item.Cantidad);
+                                cmdStock.Parameters.AddWithValue("@idMaterial", item.IdMaterial);
+                                cmdStock.ExecuteNonQuery();
+                            }
+                        }
+
+                        tx.Commit();
+                        MessageBox.Show("Solicitud enviada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        // limpiar UI
                         solicitudActual.Clear();
                         dgSolicitud.ItemsSource = null;
                         ActualizarTotal();
+                        txtNombreProyecto.Clear();
                         CargarMaterialesBD();
                     }
                     catch (Exception ex)
                     {
-                        transaction.Rollback();
+                        tx.Rollback();
                         MessageBox.Show("Error al enviar la solicitud: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
         }
+
+
 
         private void BtnCancelar_Click(object sender, RoutedEventArgs e)
         {

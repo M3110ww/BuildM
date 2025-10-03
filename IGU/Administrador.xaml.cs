@@ -27,11 +27,6 @@ namespace BuildM.IGU
             //frameContenido.Content = new Solicitudes();
         }
 
-        private void BtnProyectos_Click(object sender, RoutedEventArgs e)
-        {
-            //frameContenido.Content = new Proyectos();
-        }
-
         private void BtnReportes_Click(object sender, RoutedEventArgs e)
         {
             //frameContenido.Content = new Reportes();
