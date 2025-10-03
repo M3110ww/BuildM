@@ -24,7 +24,7 @@ namespace BuildM.IGU
 
         private void BtnSolicitudes_Click(object sender, RoutedEventArgs e)
         {
-            //frameContenido.Content = new Solicitudes();
+            frameContenido.Content = new Solicitudes();
         }
 
         private void BtnReportes_Click(object sender, RoutedEventArgs e)
