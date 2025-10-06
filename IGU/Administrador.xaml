@@ -22,48 +22,19 @@
 
         <!-- Menú lateral alineado y centrado -->
         <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="213,262,0,0" Grid.ColumnSpan="2">
-            <Button Content="Inventario" Name="btnInventario"
+            <Button Content="INVENTARIO" Name="BtnInventario"
                     Click="BtnInventario_Click"
                     Margin="0,10" Height="60" Width="200" FontSize="30" 
                     Background="#1e3a5f" Foreground="White" FontWeight="Bold" 
                     BorderBrush="Transparent" BorderThickness="0"/>
-            <Button Content="Solicitudes" Name="btnSolicitudes"
+            <Button Content="SOLICITUDES" Name="BtnSolicitudes"
                     Click="BtnSolicitudes_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-            <Button Content="Proyectos" Name="btnProyectos"
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-                    Click="BtnProyectos_Click"
-                    Margin="0,10,0,10" Height="40"
-                    Background="#2C3E50" Foreground="White" FontWeight="Bold"/>
-            <Button Content="Reportes" Name="btnReportes"
+                    Margin="0,10,0,10" Height="40" FontSize="30"
+                    Background="#1e3a5f" Foreground="White" FontWeight="Bold"/>
+            <Button Content="REPORTES" Name="BtnReportes"
                     Click="BtnReportes_Click"
-                    Margin="0,10" Height="60" Width="200" FontSize="30"
-                    Background="#1e3a5f" Foreground="White" FontWeight="Bold"
-                    BorderBrush="Transparent" BorderThickness="0"/>
+                    Margin="0,10,0,10" Height="40" FontSize="30"
+                    Background="#1e3a5f" Foreground="White" FontWeight="Bold"/>
         </StackPanel>
 
         <!-- Área de contenido dinámico -->
