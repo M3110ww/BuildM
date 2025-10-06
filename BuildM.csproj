@@ -13,6 +13,7 @@
     <None Remove="Recursos\Fondobuild.png" />
     <None Remove="Recursos\FondoR.png" />
     <None Remove="Recursos\SOLICITUD.png" />
+    <None Remove="Recursos\Solicitudes.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Recursos\SOLICITUD.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Recursos\Solicitudes.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
