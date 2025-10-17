@@ -1,23 +1,27 @@
-﻿using System.Windows;
-using BuildM.Models;
+﻿using BuildM.Models;
+using System.Windows;
 
 namespace BuildM.IGU
 {
     public partial class DetalleSolicitud : Window
     {
-        private Solicitudd solicitudActual;
+        private int idSolicitud;
 
-        public DetalleSolicitud(Solicitudd solicitud)
+        public DetalleSolicitud(int idSolicitud)
         {
             InitializeComponent();
-            solicitudActual = solicitud;
-            CargarDatos();
+            this.idSolicitud = idSolicitud;
+            CargarDetalles();
         }
 
-        private void CargarDatos()
+        private void CargarDetalles()
         {
-            // Aquí puedes mostrar la información de la solicitud en controles del XAML
-            // Ejemplo: txtId.Text = solicitudActual.Id.ToString();
+            var dao = new DetalleDAO();
+            List<Detalle> detalles = dao.ObtenerDetallesPorSolicitud(idSolicitud);
+            TablaDetalles.ItemsSource = detalles;
+
+            decimal total = dao.CalcularTotalPorSolicitud(idSolicitud);
+            TxtTotal.Text = total.ToString("C");
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BuildM.Models
+﻿namespace BuildM.Models
 {
     public class Solicitudd
     {

@@ -6,28 +6,23 @@
         WindowState="Maximized">
 
     <Canvas>
-        <!-- Fondo -->
         <Canvas.Background>
             <ImageBrush ImageSource="pack://application:,,,/BuildM;component/Recursos/Solicitudes.png"
                         Stretch="Fill"/>
         </Canvas.Background>
 
-        <!-- Nombre Proyecto -->
         <Label Content="Nombre del Proyecto:" Canvas.Left="481" FontSize="20"  Canvas.Top="257" FontWeight="Bold" Height="47" Width="234" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <TextBox x:Name="txtNombreProyecto" FontSize="14" Width="330" Height="22" 
                  Canvas.Left="712" Canvas.Top="268" VerticalContentAlignment="Center"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <!-- Material -->
         <Label Content="Material:" Canvas.Left="481" FontSize="20" Canvas.Top="309" FontWeight="Bold" Height="35" Width="103" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <ComboBox x:Name="cmbMateriales" FontSize="14" Width="444" Height="22"
                   Canvas.Left="598" Canvas.Top="317" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <!-- Cantidad -->
         <Label Content="Cantidad:" Canvas.Left="481" FontSize="20" Canvas.Top="349" FontWeight="Bold" Height="37" Width="103" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         <TextBox x:Name="txtCantidad"  FontSize="14" Width="117" Height="22"
                  Canvas.Left="598" Canvas.Top="356" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <!-- Botones -->
         <Button Content="Agregar" Canvas.Left="762" Canvas.Top="352" BorderBrush="Transparent" FontWeight="Bold" FontSize="20"
                 Width="116" Height="30" Background="#fbc215" Foreground="Black"  
                 Click="BtnAgregar_Click" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -41,7 +36,6 @@
                 Width="95" Height="38" Background="#e74c3c" BorderBrush="Transparent" Foreground="White"
                 Click="BtnCancelar_Click" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
-        <!-- Tabla Detalle -->
         <DataGrid x:Name="dgSolicitud" 
           Canvas.Left="210" Canvas.Top="408"
           Width="1135" Height="227"
@@ -54,24 +48,17 @@
           BorderBrush="Black"
           BorderThickness="2">
 
-            <!-- Estilo para el encabezado -->
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader">
-                    <!-- Fondo del encabezado -->
                     <Setter Property="Background" Value="#032445"/>
-                    <!-- Texto blanco -->
                     <Setter Property="Foreground" Value="White"/>
-                    <!-- Tamaño de fuente -->
                     <Setter Property="FontSize" Value="14"/>
-                    <!-- Centrar el texto -->
                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                    <!-- Bordes -->
                     <Setter Property="BorderBrush" Value="White"/>
                     <Setter Property="BorderThickness" Value="2"/>
                 </Style>
             </DataGrid.ColumnHeaderStyle>
 
-            <!-- Columnas -->
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Material" Binding="{Binding Nombre}" Width="*"/>
                 <DataGridTextColumn Header="Descripción" Binding="{Binding Descripcion}" Width="*"/>
@@ -81,7 +68,6 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Total -->
         <Label x:Name="lblTotal" Content="Total: $0.00" 
                FontWeight="Bold" FontSize="20"
                Canvas.Left="893" Canvas.Top="355" Height="35" Width="149" HorizontalAlignment="Left" VerticalAlignment="Center"/>

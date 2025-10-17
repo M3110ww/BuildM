@@ -6,22 +6,17 @@
          WindowState="Maximized">
 
     <Grid>
-        <!-- Fondo principal -->
         <Grid.Background>
             <ImageBrush ImageSource="pack://application:,,,/BuildM;component/Recursos/FondoAdmin.png"
                         Stretch="Fill"/>
         </Grid.Background>
 
-        <!-- Divisiones: menú lateral (col 0), contenido (col 1) -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="332"/>
-            <!-- Menú lateral -->
             <ColumnDefinition/>
-            <!-- Contenido dinámico -->
         </Grid.ColumnDefinitions>
 
-        <!-- Menú lateral alineado y centrado -->
-        <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="213,262,0,0" Grid.ColumnSpan="2">
+        <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="220,240,0,0" Grid.ColumnSpan="2">
             <Button Content="INVENTARIO" Name="BtnInventario"
                     Click="BtnInventario_Click"
                     Margin="0,10" Height="60" Width="200" FontSize="30" 
@@ -29,31 +24,29 @@
                     BorderBrush="Transparent" BorderThickness="0"/>
             <Button Content="SOLICITUDES" Name="BtnSolicitudes"
                     Click="BtnSolicitudes_Click"
-                    Margin="0,10,0,10" Height="40" FontSize="30"
+                    Margin="0,10" Height="60" Width="200" FontSize="30" 
                     Background="#1e3a5f" Foreground="White" FontWeight="Bold"
                     BorderBrush="Transparent" BorderThickness="0"/>
             <Button Content="REPORTES" Name="BtnReportes"
                     Click="BtnReportes_Click"
-                    Margin="0,10,0,10" Height="40" FontSize="30"
+                    Margin="0,10" Height="60" Width="200" FontSize="30" 
                     Background="#1e3a5f" Foreground="White" FontWeight="Bold"
                     BorderBrush="Transparent" BorderThickness="0"/>
         </StackPanel>
 
-        <!-- Área de contenido dinámico -->
         <Frame x:Name="frameContenido"
                Grid.Column="1"
                NavigationUIVisibility="Hidden"
                Margin="40,120,40,40"/>
 
-        <!-- Título dinámico centrado -->
         <Label x:Name="lblTitulo"
                Grid.Column="1" 
-               Content="Inventario" 
+               Content="INVENTARIO" 
                FontSize="60" 
                FontWeight="Bold" 
                HorizontalAlignment="Left"
                VerticalAlignment="Top"
-               Margin="505,83,0,0"
+               Margin="465,82,0,0"
                Foreground="Black"/>
     </Grid>
 </Window>

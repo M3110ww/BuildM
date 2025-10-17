@@ -1,10 +1,5 @@
 ﻿using BuildM.Models;
 using MySqlConnector;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace BuildM.IGU
@@ -45,7 +40,6 @@ namespace BuildM.IGU
                         {
                             if (reader.Read())
                             {
-                                // Guardar datos en SesionUsuario
                                 SesionUsuario.IdUsuario = reader.GetInt32("id_usuario");
                                 SesionUsuario.Nombre = reader.GetString("nombre");
                                 SesionUsuario.Rol = reader.GetString("rol");

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace BuildM.IGU
 {
@@ -13,7 +8,6 @@ namespace BuildM.IGU
         {
             InitializeComponent();
 
-            // Al iniciar, mostramos Inventario por defecto
             frameContenido.Content = new Inventario();
         }
 
@@ -31,7 +25,8 @@ namespace BuildM.IGU
 
         private void BtnReportes_Click(object sender, RoutedEventArgs e)
         {
-            //frameContenido.Content = new Reportes();
+            frameContenido.Content = new Reportes();
+            lblTitulo.Content = "REPORTES";
         }
     }
 }

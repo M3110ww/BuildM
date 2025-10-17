@@ -4,35 +4,29 @@
       Title="Inventario de Materiales" Height="520" Width="900" MinWidth="700">
 
     <Grid Margin="10">
-        <!-- Filas: formulario (Auto), botones (Auto), tabla (*) -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- FORMULARIO -->
         <Border Grid.Row="0" CornerRadius="12" Background="#CCFFFFFF" Padding="16" Margin="20,0,-20,10" BorderBrush="Transparent">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Nombre -->
                 <StackPanel Orientation="Vertical" Margin="0,0,12,0">
                     <TextBlock Text="Nombre" FontWeight="Bold" FontSize="15" Foreground="Black"/>
                     <TextBox x:Name="txtNombre" Width="200" Height="30" Margin="0,4,0,0"/>
                 </StackPanel>
 
-                <!-- Descripción -->
                 <StackPanel Orientation="Vertical" Margin="0,0,12,0">
                     <TextBlock Text="Descripción" FontWeight="Bold" FontSize="15" Foreground="Black"/>
                     <TextBox x:Name="txtDescripcion" Width="300" Height="30" Margin="0,4,0,0"/>
                 </StackPanel>
 
-                <!-- Stock -->
                 <StackPanel Orientation="Vertical" Margin="0,0,12,0">
                     <TextBlock Text="Stock" FontWeight="Bold" FontSize="15" Foreground="Black"/>
                     <TextBox x:Name="txtStock" Width="100" Height="30" Margin="0,4,0,0"/>
                 </StackPanel>
 
-                <!-- Costo -->
                 <StackPanel Orientation="Vertical" Margin="0,0,12,0">
                     <TextBlock Text="Costo" FontWeight="Bold" FontSize="15" Foreground="Black"/>
                     <TextBox x:Name="txtCosto" Width="120" Height="30" Margin="0,4,0,0"/>
@@ -40,7 +34,6 @@
             </StackPanel>
         </Border>
 
-        <!-- BOTONES (debajo del formulario) -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,15">
             <Button x:Name="btnUpdate" Content="Actualizar" Click="btnUpdate_Click"
                     Width="120" Height="40" Margin="8,0"
@@ -58,7 +51,6 @@
                     FontWeight="Bold" BorderBrush="Transparent" Cursor="Hand"/>
         </StackPanel>
 
-        <!-- TABLA -->
         <DataGrid Grid.Row="2" x:Name="dgMateriales"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"

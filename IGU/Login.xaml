@@ -6,29 +6,23 @@
         WindowState="Maximized">
 
     <Grid>
-        <!-- Fondo -->
         <Grid.Background>
             <ImageBrush ImageSource="pack://application:,,,/BuildM;component/Recursos/Fondobuild.png" 
                         Stretch="Fill"/>
         </Grid.Background>
 
-        <!-- Panel del Login -->
-        <!-- Panel del Login -->
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top"
             Background="#DDFFFFFF" Width="500" Height="300" 
             Margin="0,350,0,0" Orientation="Vertical">
 
-            <!-- Correo -->
             <TextBlock Text="Correo:" Foreground="Black" FontWeight="Bold" 
                FontSize="20" HorizontalAlignment="Left" Margin="0,10,0,5"/>
             <TextBox x:Name="txtCorreo" Width="350" VerticalContentAlignment="Center"  BorderBrush="#fbc215" BorderThickness="2" Height="36" Margin="0,0,0,20"/>
 
-            <!-- Contraseña -->
             <TextBlock Text="Contraseña:" Foreground="Black" FontWeight="Bold" 
                FontSize="20" HorizontalAlignment="Left" Margin="0,10,0,5"/>
             <PasswordBox x:Name="txtPassword" VerticalContentAlignment="Center" BorderBrush="#fbc215" BorderThickness="2" Width="350" Height="36" Margin="0,0,0,30"/>
 
-            <!-- Botones -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
                 <Button Content="Login" Width="140" Height="42" Margin="10,0" Click="BtnLogin_Click"
                 Background="#fbc215" Foreground="Black" BorderThickness="0" BorderBrush="Transparent"

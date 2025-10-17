@@ -1,6 +1,4 @@
 ﻿using BuildM.Models;
-using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -8,12 +6,12 @@ using System.Windows.Media.Animation;
 
 namespace BuildM.IGU
 {
-    public partial class Solicitudes : UserControl
+    public partial class Solicitudes : Page
     {
         public Solicitudes()
         {
             InitializeComponent();
-            Loaded += (s, e) => CargarSolicitudes();
+            CargarSolicitudes();
         }
 
         private void CargarSolicitudes()
@@ -21,134 +19,144 @@ namespace BuildM.IGU
             var dao = new SolicitudDAO();
             List<Solicitudd> solicitudes = dao.ObtenerSolicitudes();
 
-            ContenedorSolicitudes.Items.Clear();
+            ContenedorSolicitudes.Children.Clear();
 
             foreach (var solicitud in solicitudes)
             {
-                if (string.IsNullOrWhiteSpace(solicitud.Estado))
-                    solicitud.Estado = "Pendiente";
+                if (string.IsNullOrEmpty(solicitud.Estado))
+                    solicitud.Estado = "EN ESPERA";
 
-                var tarjeta = CrearTarjetaSolicitud(solicitud);
-                tarjeta.Opacity = 0;
+                Border card = CrearTarjetaSolicitud(solicitud);
+                ContenedorSolicitudes.Children.Add(card);
 
-                ContenedorSolicitudes.Items.Add(tarjeta);
-
-                DoubleAnimation fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300));
-                tarjeta.BeginAnimation(Border.OpacityProperty, fadeIn);
+                DoubleAnimation fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(400));
+                card.BeginAnimation(UIElement.OpacityProperty, fadeIn);
             }
         }
 
         private Border CrearTarjetaSolicitud(Solicitudd solicitud)
         {
-            Border borde = new Border
+            Border card = new Border
             {
-                Background = Brushes.White,
                 CornerRadius = new CornerRadius(8),
-                Margin = new Thickness(0, 0, 0, 10),
-                Padding = new Thickness(15),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                MaxWidth = 800,
+                Background = Brushes.White,
+                Margin = new Thickness(0, 6, 0, 6),
+                Padding = new Thickness(16),
                 Effect = new System.Windows.Media.Effects.DropShadowEffect
                 {
-                    Color = Colors.Black,
-                    BlurRadius = 4,
+                    BlurRadius = 6,
+                    ShadowDepth = 2,
                     Opacity = 0.2
                 }
             };
 
-            DockPanel panel = new DockPanel { LastChildFill = false };
+            Grid grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            // --- Controles a la derecha ---
-            StackPanel derecha = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
-
-            ComboBox estadoCombo = new ComboBox
-            {
-                ItemsSource = new List<string> { "Pendiente", "Aprobado", "Rechazado" },
-                SelectedItem = solicitud.Estado,
-                Width = 120,
-                Margin = new Thickness(10, 0, 0, 0),
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                FontWeight = FontWeights.SemiBold
-            };
-            CambiarColorEstado(estadoCombo, solicitud.Estado);
-
-            estadoCombo.SelectionChanged += (s, e) =>
-            {
-                if (estadoCombo.SelectedItem != null)
-                {
-                    string nuevoEstado = estadoCombo.SelectedItem.ToString();
-                    CambiarColorEstado(estadoCombo, nuevoEstado);
-                    solicitud.Estado = nuevoEstado;
-
-                    var dao = new SolicitudDAO();
-                    dao.ActualizarEstado(solicitud.Id, nuevoEstado);
-                }
-            };
-
-            Button btnDetalles = new Button
-            {
-                Content = "Detalles",
-                Background = new SolidColorBrush(Color.FromRgb(30, 58, 95)),
-                Foreground = Brushes.White,
-                Margin = new Thickness(10, 0, 0, 0),
-                Padding = new Thickness(12, 4, 12, 4),
-                Cursor = System.Windows.Input.Cursors.Hand
-            };
-            btnDetalles.Click += (s, e) =>
-            {
-                DetalleSolicitud ventana = new DetalleSolicitud(solicitud);
-                ventana.ShowDialog();
-            };
-
-            derecha.Children.Add(estadoCombo);
-            derecha.Children.Add(btnDetalles);
-            DockPanel.SetDock(derecha, Dock.Right);
-            panel.Children.Add(derecha);
-
-            // --- Información a la izquierda ---
-            StackPanel izquierda = new StackPanel { Margin = new Thickness(0, 0, 10, 0) };
-
-            izquierda.Children.Add(new TextBlock
+            // Información general
+            StackPanel info = new StackPanel();
+            info.Children.Add(new TextBlock
             {
                 Text = $"Proyecto: {solicitud.NombreProyecto}",
                 FontWeight = FontWeights.Bold,
                 FontSize = 15,
-                Foreground = Brushes.Black
+                Margin = new Thickness(0, 0, 0, 2)
             });
-
-            izquierda.Children.Add(new TextBlock
+            info.Children.Add(new TextBlock
             {
                 Text = $"Responsable: {solicitud.Responsable}",
-                Foreground = Brushes.Gray,
-                FontSize = 13
+                FontSize = 13,
+                Foreground = Brushes.Gray
             });
-
-            izquierda.Children.Add(new TextBlock
+            info.Children.Add(new TextBlock
             {
                 Text = $"Fecha: {solicitud.Fecha:dd/MM/yyyy}",
-                Foreground = Brushes.Gray,
-                FontSize = 13
+                FontSize = 13,
+                Foreground = Brushes.Gray
             });
+            Grid.SetColumn(info, 0);
+            grid.Children.Add(info);
 
-            panel.Children.Add(izquierda);
+            ComboBox comboEstado = new ComboBox
+            {
+                Width = 130,
+                Margin = new Thickness(10, 0, 10, 0),
+                FontSize = 13,
+                ItemsSource = new List<string> { "EN ESPERA", "ACEPTADO", "RECHAZADO" },
+                SelectedItem = solicitud.Estado,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center
+            };
 
-            borde.Child = panel;
-            return borde;
+            comboEstado.Foreground = ObtenerColorTextoEstado(solicitud.Estado);
+
+            comboEstado.SelectionChanged += (s, e) =>
+            {
+                if (comboEstado.SelectedItem is string nuevoEstado)
+                {
+                    solicitud.Estado = nuevoEstado;
+                    comboEstado.Foreground = ObtenerColorTextoEstado(nuevoEstado);
+
+                    try
+                    {
+                        var dao = new SolicitudDAO();
+                        dao.ActualizarEstado(solicitud.Id, nuevoEstado);
+
+                        MessageBox.Show($"Estado actualizado a '{nuevoEstado}' correctamente.",
+                                        "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al actualizar el estado: {ex.Message}",
+                                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            };
+
+            Grid.SetColumn(comboEstado, 1);
+            grid.Children.Add(comboEstado);
+
+            Button btnDetalles = new Button
+            {
+                Content = "Detalles",
+                Background = new SolidColorBrush(Color.FromRgb(51, 122, 255)),
+                Foreground = Brushes.White,
+                Padding = new Thickness(10, 5, 10, 5),
+                Margin = new Thickness(0, 0, 5, 0),
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+            Grid.SetColumn(btnDetalles, 2);
+            grid.Children.Add(btnDetalles);
+
+            btnDetalles.Click += (s, e) =>
+            {
+                try
+                {
+                    DetalleSolicitud ventanaDetalles = new DetalleSolicitud(solicitud.Id);
+                    ventanaDetalles.ShowDialog();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al abrir los detalles: " + ex.Message,
+                                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
+
+            card.Child = grid;
+            return card;
         }
 
-        private void CambiarColorEstado(ComboBox combo, string estado)
+        private SolidColorBrush ObtenerColorTextoEstado(string estado)
         {
-            Brush color = Brushes.LightGray;
-            switch (estado)
+            return estado switch
             {
-                case "Pendiente":
-                    color = new SolidColorBrush(Color.FromRgb(255, 213, 79)); break; // amarillo
-                case "Aprobado":
-                    color = new SolidColorBrush(Color.FromRgb(76, 175, 80)); break; // verde
-                case "Rechazado":
-                    color = new SolidColorBrush(Color.FromRgb(244, 67, 54)); break; // rojo
-            }
-            combo.Background = color;
+                "ACEPTADO" => new SolidColorBrush(Color.FromRgb(0, 128, 0)),
+                "RECHAZADO" => new SolidColorBrush(Color.FromRgb(192, 0, 0)),
+                "EN ESPERA" => new SolidColorBrush(Color.FromRgb(0, 102, 204)),
+                _ => Brushes.Black
+            };
         }
     }
 }

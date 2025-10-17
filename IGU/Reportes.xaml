@@ -1,0 +1,73 @@
+<Page x:Class="BuildM.IGU.Reportes"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Title="Reportes"
+      Height="520"
+      Width="940"
+      MinWidth="700">
+
+    <Grid Margin="10">
+        <Border CornerRadius="12"
+                Background="#F9FAFB"
+                Padding="20"
+                Margin="40,10,20,20">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                <StackPanel Orientation="Vertical"
+                            VerticalAlignment="Top"
+                            Margin="0,5,0,5"
+                            Width="Auto">
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Margin="0,0,0,10">
+                        <ComboBox x:Name="CmbReportes"
+                                  Width="250"
+                                  Height="35"
+                                  Margin="0,0,15,0"
+                                  VerticalContentAlignment="Center"
+                                  FontSize="14"
+                                  SelectedIndex="0">
+                            <ComboBoxItem Content="Materiales agotados" />
+                            <ComboBoxItem Content="Solicitudes en espera" />
+                            <ComboBoxItem Content="Solicitudes aceptadas" />
+                            <ComboBoxItem Content="Solicitudes rechazadas" />
+                        </ComboBox>
+
+                        <Button Content="Generar"
+                                Width="120"
+                                Height="35"
+                                Background="#0078D7"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="BtnGenerar_Click" />
+                    </StackPanel>
+
+                    <TextBlock x:Name="lblTituloReporte"
+                               Text="Seleccione un reporte"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Margin="0,0,0,10" />
+
+                    <DataGrid x:Name="dgReportes"
+                              AutoGenerateColumns="True"
+                              IsReadOnly="True"
+                              RowHeaderWidth="0"
+                              AlternatingRowBackground="#FFF3F3F3"
+                              GridLinesVisibility="None"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto"
+                              MinHeight="200"
+                              MaxHeight="350"
+                              Margin="0,0,0,10" />
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Page>

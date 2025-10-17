@@ -1,17 +1,11 @@
 ﻿using BuildM.Models;
 using MySqlConnector;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Transactions;
 using System.Windows;
 
 namespace BuildM.IGU
 {
     public partial class Solicitud : Window
     {
-        // Modelo de material (ajusta si ya tienes clase en Models)
         public class Material
         {
             public int IdMaterial { get; set; }
@@ -19,14 +13,11 @@ namespace BuildM.IGU
             public string Descripcion { get; set; } = string.Empty;
             public int Stock { get; set; }
             public decimal Costo { get; set; }
-
-            // Propiedad para mostrar en ComboBox (opcional)
             public string DisplayText => $"{Nombre} - {Descripcion} - ${Costo:N2}";
 
             public override string ToString() => DisplayText;
         }
 
-        // Item que se añade a la solicitud
         public class ItemSolicitud
         {
             public int IdMaterial { get; set; }
@@ -40,7 +31,6 @@ namespace BuildM.IGU
         private List<Material> materialesDisponibles = new List<Material>();
         private List<ItemSolicitud> solicitudActual = new List<ItemSolicitud>();
 
-        // Ajusta la cadena de conexión a la tuya
         private string connStr = "Server=localhost;Port=3306;Database=BuildManager;Uid=root;Pwd=1013105926;SslMode=None;AllowPublicKeyRetrieval=True;";
 
         public Solicitud()
@@ -101,7 +91,6 @@ namespace BuildM.IGU
                 return;
             }
 
-            // Si ya existe el material en la lista, simplemente aumentamos la cantidad (opcional) o agregar nuevo item.
             var existing = solicitudActual.FirstOrDefault(x => x.IdMaterial == mat.IdMaterial);
             if (existing != null)
             {
@@ -170,13 +159,12 @@ namespace BuildM.IGU
                 {
                     try
                     {
-                        // Insertar cabecera en solicitudes
                         string sqlSolicitud = @"INSERT INTO solicitudes (fecha, nombre_proyecto, responsable, estado, id_usuario)
                                         VALUES (NOW(), @nombre_proyecto, @responsable, 'EN ESPERA', @id_usuario)";
                         using (var cmdSol = new MySqlCommand(sqlSolicitud, conn, tx))
                         {
                             cmdSol.Parameters.AddWithValue("@nombre_proyecto", nombreProyecto);
-                            cmdSol.Parameters.AddWithValue("@responsable", SesionUsuario.Nombre); // 🔹 Ahora guarda el NOMBRE y no el rol
+                            cmdSol.Parameters.AddWithValue("@responsable", SesionUsuario.Nombre);
                             cmdSol.Parameters.AddWithValue("@id_usuario", SesionUsuario.IdUsuario);
                             cmdSol.ExecuteNonQuery();
                         }
@@ -187,7 +175,6 @@ namespace BuildM.IGU
                             idSolicitud = Convert.ToInt64(cmdGet.ExecuteScalar());
                         }
 
-                        // Insertar cada línea en detalle_solicitud
                         foreach (var item in solicitudActual)
                         {
                             string sqlDetalle = @"INSERT INTO detalle_solicitud
@@ -199,7 +186,7 @@ namespace BuildM.IGU
                                 cmdDet.Parameters.AddWithValue("@idSolicitud", idSolicitud);
                                 cmdDet.Parameters.AddWithValue("@idMaterial", item.IdMaterial);
                                 cmdDet.Parameters.AddWithValue("@nombreProyecto", nombreProyecto);
-                                cmdDet.Parameters.AddWithValue("@responsable", SesionUsuario.Nombre); // 🔹 También aquí guarda el nombre
+                                cmdDet.Parameters.AddWithValue("@responsable", SesionUsuario.Nombre);
                                 cmdDet.Parameters.AddWithValue("@nombreMaterial", item.Nombre);
                                 cmdDet.Parameters.AddWithValue("@descripcionMaterial", item.Descripcion);
                                 cmdDet.Parameters.AddWithValue("@cantidad", item.Cantidad);
@@ -208,7 +195,6 @@ namespace BuildM.IGU
                                 cmdDet.ExecuteNonQuery();
                             }
 
-                            // Actualizar stock
                             string sqlStock = "UPDATE materiales SET stock = stock - @cantidad WHERE id_material = @idMaterial";
                             using (var cmdStock = new MySqlCommand(sqlStock, conn, tx))
                             {
@@ -221,7 +207,6 @@ namespace BuildM.IGU
                         tx.Commit();
                         MessageBox.Show("Solicitud enviada correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                        // limpiar UI
                         solicitudActual.Clear();
                         dgSolicitud.ItemsSource = null;
                         ActualizarTotal();
